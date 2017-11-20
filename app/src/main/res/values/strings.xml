@@ -1,3 +1,5 @@
 <resources>
-    <string name="app_name">DogDate</string>
+    <string name="app_name">Dog Date</string>
+    <string name="title_activity_main3">Main3Activity</string>
+    <string name="welcome_message">Welcome to Dog Date</string>
 </resources>

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/get_dogs"
+        android:onClick="showAllDogs"
+        android:title="Show Dogs" />
+
+    <item
+        android:id="@+id/add_dog"
+        android:onClick="addNewDog"
+        android:title="Add a new Dog" />
+
+</menu>
