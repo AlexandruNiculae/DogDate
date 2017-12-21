@@ -1,6 +1,8 @@
 package ro.ubbcluj.mobileapp.dogdate;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -13,7 +15,8 @@ import ro.ubbcluj.mobileapp.dogdate.domain.Dog;
 public class AddDogActivity extends AppCompatActivity {
 
     Dog doggo;
-    TextView name,race,pers,age;
+    TextView name,pers,age;
+    TextView race;
     CheckBox sendToMail;
 
     @Override
@@ -21,20 +24,18 @@ public class AddDogActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_dog);
 
-        Intent intent = getIntent();
-
+        name = (TextView) findViewById(R.id.addDogNameEdit);
+        race = (TextView) findViewById(R.id.addDogSelectRaceButton);
+        pers = (TextView) findViewById(R.id.addDogPersEdit);
+        age = (TextView) findViewById(R.id.addDogAgeEdit);
     }
 
-
     public void addDog(View view){
-        name = (TextView) findViewById(R.id.nameText);
-        race = (TextView) findViewById(R.id.raceText);
-        pers = (TextView) findViewById(R.id.persText);
-        age = (TextView) findViewById(R.id.ageText);
+
 
         doggo = new Dog(name.getText().toString(),race.getText().toString(),pers.getText().toString(),Integer.parseInt(age.getText().toString()));
 
-        sendToMail = (CheckBox) findViewById(R.id.sendMailCheck);
+        sendToMail = (CheckBox) findViewById(R.id.addDogMailCheck);
 
         if(sendToMail.isChecked()){
             Intent intent = new Intent(Intent.ACTION_SEND);
@@ -46,9 +47,25 @@ public class AddDogActivity extends AppCompatActivity {
 
 
         Intent addIntent = new Intent(this,MainActivity.class);
-        addIntent.putExtra("add-dog",doggo);
+        addIntent.putExtra(getString(R.string.key_add_dog),doggo);
         setResult(Activity.RESULT_OK,addIntent);
         finish();
+    }
+
+    public void selectRace(View view){
+        String[] races;
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        races = getResources().getStringArray(R.array.dog_races);
+        builder.setTitle("Choose race")
+                .setItems(R.array.dog_races, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                         String selectedRace = races[which];
+                         race.setText(selectedRace);
+                    }
+                });
+        AlertDialog alert = builder.create();
+        alert.show();
     }
 
 }

@@ -2,4 +2,13 @@
     <string name="app_name">Dog Date</string>
     <string name="title_activity_main3">Main3Activity</string>
     <string name="welcome_message">Welcome to Dog Date</string>
+    <string name="stats_button">View Statistics</string>
+    <string name="dogs_button">View My Dogs</string>
+    <string name="add_button">Add Dog</string>
+    <string name="sync_button">Sync</string>
+    <string name="key_view_dog">view-dog</string>
+    <string name="key_all_dogs">all-dogs</string>
+    <string name="key_add_dog">add-dog</string>
+    <string name="key_del_dog">del-dog</string>
+    <string name="key_upd_dog">upd-dog</string>
 </resources>

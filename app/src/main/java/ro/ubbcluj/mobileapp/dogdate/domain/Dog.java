@@ -41,4 +41,12 @@ public class Dog implements Serializable {
         return race+": "+name+" "+age+" "+personality;
     }
 
+    public boolean equals(Object other){
+        if (other == null) return false;
+        if (other == this) return true;
+        if (!(other instanceof Dog))return false;
+        Dog otherDog = (Dog)other;
+        return name.equals(otherDog.getName());
+    }
+
 }

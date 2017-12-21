@@ -4,14 +4,14 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.Toast;
 
 import java.util.ArrayList;
 
 import ro.ubbcluj.mobileapp.dogdate.domain.Dog;
+
 
 public class MainActivity extends AppCompatActivity {
 
@@ -29,13 +29,6 @@ public class MainActivity extends AppCompatActivity {
         allDogs.add(new Dog("Mark","Pitbull","Active",3));
         allDogs.add(new Dog("Puddles","Dalmatian","Scared",4));
 
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.menu, menu);
-        return true;
     }
 
     @Override
@@ -58,8 +51,8 @@ public class MainActivity extends AppCompatActivity {
         switch(requestCode) {
             case (1) : {
                 if (resultCode == Activity.RESULT_OK) {
-                    Dog newDog = (Dog)data.getSerializableExtra("add-dog");
-                    allDogs.add(newDog);
+                    allDogs = (ArrayList<Dog>) data.getSerializableExtra(getString(R.string.key_all_dogs));
+                    showToast("Dogs have been modified");
                 }
                 break;
             }
@@ -71,21 +64,18 @@ public class MainActivity extends AppCompatActivity {
         toast.show();
     }
 
-    public void showAllDogs(MenuItem item)  {
+    public void showAllDogs(View view)  {
         Intent intent = new Intent(this, DogListActivity.class);
-        intent.putExtra("dogList", allDogs);
-        startActivity(intent);
+        intent.putExtra(getString(R.string.key_all_dogs), allDogs);
+        int req_code_modify = 1;
+        startActivityForResult(intent,req_code_modify);
     }
 
-    public void addNewDog(MenuItem item)  {
-        Intent intent = new Intent(this, AddDogActivity.class);
-        String message = "DOGGO NEW";
-        intent.putExtra("msg", message);
-        int req_code_add = 1;
-        startActivityForResult(intent,req_code_add);
+    public void showDogStats(View view) {
+        Intent statsIntent = new Intent(this, DogStatsActivity.class);
+        statsIntent.putExtra(getString(R.string.key_all_dogs), allDogs);
+        startActivity(statsIntent);
     }
 
-    public void addDog(Dog dog){
-        this.allDogs.add(dog);
-    }
+
 }
