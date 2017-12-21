@@ -11,12 +11,13 @@ import android.widget.Toast;
 import java.util.ArrayList;
 
 import ro.ubbcluj.mobileapp.dogdate.domain.Dog;
+import ro.ubbcluj.mobileapp.dogdate.repository.DogsRepository;
 
 
 public class MainActivity extends AppCompatActivity {
 
-
     private ArrayList<Dog> allDogs = new ArrayList<>();
+    private DogsRepository repo;
 
 
     @Override
@@ -25,10 +26,13 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        allDogs.add(new Dog("Lucy","Husky","Friendly",2));
-        allDogs.add(new Dog("Mark","Pitbull","Active",3));
-        allDogs.add(new Dog("Puddles","Dalmatian","Scared",4));
+        populate();
 
+    }
+
+    public void populate(){
+        repo = new DogsRepository(getApplicationContext());
+        allDogs = repo.getAllDogs();
     }
 
     @Override
@@ -48,11 +52,11 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+        populate();
         switch(requestCode) {
             case (1) : {
                 if (resultCode == Activity.RESULT_OK) {
                     allDogs = (ArrayList<Dog>) data.getSerializableExtra(getString(R.string.key_all_dogs));
-                    showToast("Dogs have been modified");
                 }
                 break;
             }

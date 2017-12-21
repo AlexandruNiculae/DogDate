@@ -2,6 +2,7 @@ package ro.ubbcluj.mobileapp.dogdate;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.arch.persistence.room.Room;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -11,6 +12,8 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import ro.ubbcluj.mobileapp.dogdate.domain.Dog;
+import ro.ubbcluj.mobileapp.dogdate.repository.AppDatabase;
+import ro.ubbcluj.mobileapp.dogdate.repository.DogsDAO;
 
 public class ViewDogActivity extends AppCompatActivity {
 
@@ -48,13 +51,31 @@ public class ViewDogActivity extends AppCompatActivity {
 
 
     public void UpdateDog(View view){
+        updInDB(getData());
         Intent updIntent = new Intent(this,DogListActivity.class);
         updIntent.putExtra(getString(R.string.key_upd_dog),getData());
         setResult(Activity.RESULT_OK,updIntent);
         finish();
     }
 
+    public void updInDB(Dog dog){
+        AppDatabase db = Room.databaseBuilder(getApplicationContext(),
+                AppDatabase.class, "dogdate-db").allowMainThreadQueries()
+                .build();
+        DogsDAO dao = db.dogsDAO();
+        dao.updateDogs(new Dog[]{doggo});
+    }
+
+    public void delFromDB(Dog dog){
+        AppDatabase db = Room.databaseBuilder(getApplicationContext(),
+                AppDatabase.class, "dogdate-db").allowMainThreadQueries()
+                .build();
+        DogsDAO dao = db.dogsDAO();
+        dao.deleteDog(doggo.key);
+    }
+
     public void DeleteDog(View view){
+        delFromDB(getData());
         Intent delIntent = new Intent(this,DogListActivity.class);
         delIntent.putExtra(getString(R.string.key_del_dog),getData());
         setResult(Activity.RESULT_OK,delIntent);

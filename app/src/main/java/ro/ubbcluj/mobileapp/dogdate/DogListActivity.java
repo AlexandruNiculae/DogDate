@@ -13,19 +13,23 @@ import android.widget.Toast;
 import java.util.ArrayList;
 
 import ro.ubbcluj.mobileapp.dogdate.domain.Dog;
+import ro.ubbcluj.mobileapp.dogdate.repository.DogsRepository;
 
 
 public class DogListActivity extends AppCompatActivity  {
 
     private ArrayList<Dog> allDogs;
+    private DogsRepository repo;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_dog_list);
 
+        repo = new DogsRepository(getApplicationContext());
+
         Intent intent = getIntent();
-        allDogs = (ArrayList<Dog>) intent.getSerializableExtra(getString(R.string.key_all_dogs));
+        //allDogs = (ArrayList<Dog>) intent.getSerializableExtra(getString(R.string.key_all_dogs));
         populate();
 
     }
@@ -46,28 +50,28 @@ public class DogListActivity extends AppCompatActivity  {
             case (2) : {
                 if (resultCode == Activity.RESULT_OK) {
 
-                    if(data.hasExtra(getString(R.string.key_upd_dog))){
-                        Dog doggo = (Dog) data.getSerializableExtra(getString(R.string.key_upd_dog));
-                        if (!allDogs.contains(doggo)){
-                            showToast(doggo.getName()+ " does not exists!");
-                        }
-                        else {
-                            allDogs.remove(doggo);
-                            allDogs.add(doggo);
-                            showToast("Updated " + doggo.getName());
-                        }
-                    }
-                    if(data.hasExtra(getString(R.string.key_del_dog))){
-                        Dog doggo = (Dog) data.getSerializableExtra(getString(R.string.key_del_dog));
-                        if (!allDogs.contains(doggo)){
-                            showToast(doggo.getName()+ " does not exists!");
-                        }
-                        else {
-                            allDogs.remove(doggo);
-                            showToast("Deleted " + doggo.getName());
-                        }
-
-                    }
+//                    if(data.hasExtra(getString(R.string.key_upd_dog))){
+//                        Dog doggo = (Dog) data.getSerializableExtra(getString(R.string.key_upd_dog));
+//                        if (!allDogs.contains(doggo)){
+//                            showToast(doggo.getName()+ " does not exists!");
+//                        }
+//                        else {
+//                            allDogs.remove(doggo);
+//                            allDogs.add(doggo);
+//                            showToast("Updated " + doggo.getName());
+//                        }
+//                    }
+//                    if(data.hasExtra(getString(R.string.key_del_dog))){
+//                        Dog doggo = (Dog) data.getSerializableExtra(getString(R.string.key_del_dog));
+//                        if (!allDogs.contains(doggo)){
+//                            showToast(doggo.getName()+ " does not exists!");
+//                        }
+//                        else {
+//                            allDogs.remove(doggo);
+//                            showToast("Deleted " + doggo.getName());
+//                        }
+//
+//                    }
                 }
                 break;
             }
@@ -90,6 +94,9 @@ public class DogListActivity extends AppCompatActivity  {
     }
 
     public void populate(){
+
+        allDogs = repo.getAllDogs();
+
         ArrayAdapter<Dog> adapter = new ArrayAdapter<>(this,android.R.layout.simple_list_item_1,allDogs);
         ListView dogs = (ListView) findViewById(R.id.dogListView);
 
