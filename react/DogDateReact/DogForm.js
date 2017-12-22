@@ -1,4 +1,4 @@
-import { Platform, StyleSheet, Text, View, Image, ScrollView} from 'react-native';
+import { Platform, StyleSheet, Text, View, Image, ScrollView, Alert} from 'react-native';
 import React, { Component } from 'react';
 import { FormLabel, FormInput, Button } from 'react-native-elements'
 
@@ -14,6 +14,31 @@ export default class DogForm extends Component {
     }
   }
 
+  valid(){
+	  if(this.state.dogName.length == 0 || this.state.dogRace.length == 0 || this.state.dogPers.length == 0 || this.state.dogAge.length == 0){
+		  this.doAlert('Empty Fields','Cannot have empty fields!');
+		  return false;
+	  }
+	  else{
+		  if(this.state.dogAge > 20 || this.state.dogAge < 0){
+			  this.doAlert('Invalid Age','Age must be between 0 and 20!');
+			  return false;
+		  }
+	  }
+	  return true;
+  }
+
+  doAlert(title,msg){
+	  Alert.alert(
+		  title,
+		  msg,
+		  [
+			 {text: 'OK', onPress: () => console.log('OK Pressed')},
+		  ],
+		  { cancelable: false }
+		)
+  }
+
   render(){
     const {navigate} = this.props.navigation;
 
@@ -26,8 +51,13 @@ export default class DogForm extends Component {
         <FormLabel>Personality:</FormLabel>
         <FormInput onChangeText={(dogPers) => this.setState({dogPers})}/>
         <FormLabel>Age:</FormLabel>
-        <FormInput onChangeText={(dogAge) => this.setState({dogAge})}/>
-        <Button icon={{name: 'add'}} onPress={() => navigate('Home', {name: this.state.dogName, race: this.state.dogRace, pers: this.state.dogPers, age: this.state.dogAge})}/>
+        <FormInput onChangeText={(dogAge) => this.setState({dogAge})} keyboardType = 'numeric'/>
+        <Button icon={{name: 'add'}}
+		  		onPress={() => {
+					if(this.valid())
+						navigate('Home', {action:'add', name: this.state.dogName, race: this.state.dogRace, pers: this.state.dogPers, age: this.state.dogAge})
+				}}
+				/>
       </ScrollView>
     );}
 }

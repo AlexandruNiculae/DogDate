@@ -9,6 +9,8 @@ import { Platform, StyleSheet, Text, View, Image, ScrollView} from 'react-native
 import { StackNavigator } from 'react-navigation';
 import DogForm from './DogForm';
 import DogList from './DogList';
+import DogView from './DogView';
+import DogChart from './DogChart';
 
 
 
@@ -32,4 +34,6 @@ export default class App extends Component {
 const MainNavigator = StackNavigator({
   Home: { screen: DogList },
   AddDog: { screen: DogForm },
+  ViewDog: { screen: DogView },
+  Stats: {screen: DogChart},
 },{headerMode: "none"});
