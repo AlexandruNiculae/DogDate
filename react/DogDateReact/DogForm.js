@@ -1,6 +1,6 @@
 import { Platform, StyleSheet, Text, View, Image, ScrollView, Alert} from 'react-native';
 import React, { Component } from 'react';
-import { FormLabel, FormInput, Button } from 'react-native-elements'
+import { FormLabel, FormInput, Button } from 'react-native-elements';
 
 export default class DogForm extends Component {
 
@@ -54,8 +54,9 @@ export default class DogForm extends Component {
         <FormInput onChangeText={(dogAge) => this.setState({dogAge})} keyboardType = 'numeric'/>
         <Button icon={{name: 'add'}}
 		  		onPress={() => {
-					if(this.valid())
-						navigate('Home', {action:'add', name: this.state.dogName, race: this.state.dogRace, pers: this.state.dogPers, age: this.state.dogAge})
+					if(this.valid()){
+						navigate('Home', {action:'add', name: this.state.dogName, race: this.state.dogRace, pers: this.state.dogPers, age: this.state.dogAge});
+					}
 				}}
 				/>
       </ScrollView>
