@@ -11,9 +11,15 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import ro.ubbcluj.mobileapp.dogdate.Utils.ApiUtils;
 import ro.ubbcluj.mobileapp.dogdate.domain.Dog;
+import ro.ubbcluj.mobileapp.dogdate.observers.UserDataRepository;
 import ro.ubbcluj.mobileapp.dogdate.repository.AppDatabase;
 import ro.ubbcluj.mobileapp.dogdate.repository.DogsDAO;
+import ro.ubbcluj.mobileapp.dogdate.service.UserService;
 
 public class ViewDogActivity extends AppCompatActivity {
 
@@ -21,10 +27,16 @@ public class ViewDogActivity extends AppCompatActivity {
     TextView name,race;
     EditText pers,age;
 
+    UserService userService;
+    UserDataRepository userDataRepository;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_view_dog);
+
+        userService = ApiUtils.getUserService();
+        userDataRepository = UserDataRepository.getInstance();
 
         Intent intent = getIntent();
         doggo = (Dog) intent.getSerializableExtra(getString(R.string.key_view_dog));
@@ -51,11 +63,25 @@ public class ViewDogActivity extends AppCompatActivity {
 
 
     public void UpdateDog(View view){
-        updInDB(getData());
+        //updInDB(getData());
         Intent updIntent = new Intent(this,DogListActivity.class);
-        updIntent.putExtra(getString(R.string.key_upd_dog),getData());
-        setResult(Activity.RESULT_OK,updIntent);
-        finish();
+        Call<Dog> call = userService.updateDog(getData());
+        call.enqueue(new Callback<Dog>() {
+            @Override
+            public void onResponse(Call<Dog> call, Response<Dog> response) {
+                userDataRepository.updateDog(doggo);
+
+                updIntent.putExtra(getString(R.string.key_upd_dog),getData());
+                setResult(Activity.RESULT_OK,updIntent);
+                finish();
+            }
+
+            @Override
+            public void onFailure(Call<Dog> call, Throwable t) {
+
+            }
+        });
+
     }
 
     public void updInDB(Dog dog){
@@ -75,11 +101,25 @@ public class ViewDogActivity extends AppCompatActivity {
     }
 
     public void DeleteDog(View view){
-        delFromDB(getData());
+        //delFromDB(getData());
         Intent delIntent = new Intent(this,DogListActivity.class);
-        delIntent.putExtra(getString(R.string.key_del_dog),getData());
-        setResult(Activity.RESULT_OK,delIntent);
-        finish();
+        Call<Dog> call = userService.removeDog("" + doggo.getKey());
+        call.enqueue(new Callback<Dog>() {
+            @Override
+            public void onResponse(Call<Dog> call, Response<Dog> response) {
+                userDataRepository.removeDog(doggo);
+
+                delIntent.putExtra(getString(R.string.key_del_dog),getData());
+                setResult(Activity.RESULT_OK,delIntent);
+                finish();
+            }
+
+            @Override
+            public void onFailure(Call<Dog> call, Throwable t) {
+
+            }
+        });
+
     }
 
     public void selectRace(View view){

@@ -11,26 +11,55 @@ import android.view.View;
 import android.widget.CheckBox;
 import android.widget.TextView;
 
+import java.util.ArrayList;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import ro.ubbcluj.mobileapp.dogdate.Utils.ApiUtils;
 import ro.ubbcluj.mobileapp.dogdate.domain.Dog;
+import ro.ubbcluj.mobileapp.dogdate.observers.RepositoryObserver;
+import ro.ubbcluj.mobileapp.dogdate.observers.UserDataRepository;
 import ro.ubbcluj.mobileapp.dogdate.repository.AppDatabase;
 import ro.ubbcluj.mobileapp.dogdate.repository.DogsDAO;
+import ro.ubbcluj.mobileapp.dogdate.service.UserService;
 
-public class AddDogActivity extends AppCompatActivity {
+public class AddDogActivity extends AppCompatActivity implements RepositoryObserver {
 
     Dog doggo;
     TextView name,pers,age;
     TextView race;
     CheckBox sendToMail;
 
+    Intent data;
+
+    UserService userService;
+    UserDataRepository userDataRepository;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_dog);
 
+        data = getIntent();
+
+        userService = ApiUtils.getUserService();
+        userDataRepository = UserDataRepository.getInstance();
+
         name = (TextView) findViewById(R.id.addDogNameEdit);
         race = (TextView) findViewById(R.id.addDogSelectRaceButton);
         pers = (TextView) findViewById(R.id.addDogPersEdit);
         age = (TextView) findViewById(R.id.addDogAgeEdit);
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        Intent back = new Intent(this,MainActivity.class);
+        back.putExtra("user",data.getStringExtra("user"));
+        back.putExtra("access",data.getStringExtra("access"));
+        setResult(Activity.RESULT_OK,back);
+        finish();
     }
 
     public boolean validDog(){
@@ -64,11 +93,26 @@ public class AddDogActivity extends AppCompatActivity {
                 startActivity(Intent.createChooser(intent, "Select Email app"));
             }
 
-            addToDB(doggo);
+            //addToDB(doggo);
             Intent addIntent = new Intent(this,MainActivity.class);
-            addIntent.putExtra(getString(R.string.key_add_dog),doggo);
-            setResult(Activity.RESULT_OK,addIntent);
-            finish();
+
+            Call<Dog> call = userService.addDog(doggo);
+            call.enqueue(new Callback<Dog>() {
+                @Override
+                public void onResponse(Call<Dog> call, Response<Dog> response) {
+                    userDataRepository.addDog(doggo);
+
+                    addIntent.putExtra(getString(R.string.key_add_dog),doggo);
+                    setResult(Activity.RESULT_OK,addIntent);
+                    finish();
+                }
+
+                @Override
+                public void onFailure(Call<Dog> call, Throwable t) {
+
+                }
+            });
+
         }
         else {
             if(name.getText().toString().isEmpty() || pers.getText().toString().isEmpty() || age.toString().isEmpty())
@@ -109,4 +153,8 @@ public class AddDogActivity extends AppCompatActivity {
         alert.show();
     }
 
+    @Override
+    public void onUserDataChanged(ArrayList<Dog> places) {
+
+    }
 }

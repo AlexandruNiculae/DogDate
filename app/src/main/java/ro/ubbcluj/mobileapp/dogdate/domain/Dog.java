@@ -5,6 +5,8 @@ import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.Ignore;
 import android.arch.persistence.room.PrimaryKey;
 
+import com.google.gson.annotations.SerializedName;
+
 import java.io.Serializable;
 
 /**
@@ -15,18 +17,23 @@ import java.io.Serializable;
 @Entity(tableName = "dogs")
 public class Dog implements Serializable {
 
+    @SerializedName("key")
     @PrimaryKey(autoGenerate = true)
     public int key;
 
+    @SerializedName("name")
     @ColumnInfo(name = "name")
     private String name;
 
+    @SerializedName("race")
     @ColumnInfo(name = "race")
     private String race;
 
+    @SerializedName("personality")
     @ColumnInfo(name = "personality")
     private String personality;
 
+    @SerializedName("age")
     @ColumnInfo(name = "age")
     private int age;
 

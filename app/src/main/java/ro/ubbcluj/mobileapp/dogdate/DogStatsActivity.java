@@ -1,28 +1,46 @@
 package ro.ubbcluj.mobileapp.dogdate;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.Toast;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonArray;
+import com.google.gson.reflect.TypeToken;
 import com.jjoe64.graphview.GraphView;
 import com.jjoe64.graphview.ValueDependentColor;
 import com.jjoe64.graphview.helper.StaticLabelsFormatter;
 import com.jjoe64.graphview.series.BarGraphSeries;
 import com.jjoe64.graphview.series.DataPoint;
 
-import java.util.ArrayList;
+import java.lang.reflect.Type;
+import java.util.List;
 
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import ro.ubbcluj.mobileapp.dogdate.Utils.ApiUtils;
 import ro.ubbcluj.mobileapp.dogdate.domain.Dog;
-import ro.ubbcluj.mobileapp.dogdate.repository.DogsRepository;
+import ro.ubbcluj.mobileapp.dogdate.observers.Subject;
+import ro.ubbcluj.mobileapp.dogdate.observers.UserDataRepository;
+import ro.ubbcluj.mobileapp.dogdate.service.UserService;
 
 public class DogStatsActivity extends AppCompatActivity {
 
+
+    UserService userService;
+    private Subject userDataRepository;
+
     GraphView graph;
-    ArrayList<Dog> allDogs;
+    List<Dog> allDogs;
     BarGraphSeries<DataPoint> series;
-    private DogsRepository repo;
+
+    //private DogsRepository repo;
+    Intent data;
+
     String[] allRaces;
 
     int maxY;
@@ -32,18 +50,54 @@ public class DogStatsActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_dog_stats);
-        repo = new DogsRepository(getApplicationContext());
+        //repo = new DogsRepository(getApplicationContext());
 
-        Intent data = getIntent();
+        data = getIntent();
 
-        allDogs = repo.getAllDogs();
+        //allDogs = repo.getAllDogs();
+
+        userService = ApiUtils.getUserService();
+        userDataRepository = UserDataRepository.getInstance();
+
+        Call<JsonArray> call = userService.getAllDogs();
+        call.enqueue(new Callback<JsonArray>() {
+            @Override
+            public void onResponse(Call<JsonArray> call, Response<JsonArray> response) {
+                System.out.println("Ah");
+                System.out.println(response.code());
+                Gson gson = new Gson();
+                Type type = new TypeToken<List<Dog>>(){}.getType();
+                allDogs = gson.fromJson(response.body(), type);
+                generateGraph();
+            }
+
+            @Override
+            public void onFailure(Call<JsonArray> call, Throwable t) {
+                System.out.println(t.getMessage());
+            }
+        });
+
+
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        Intent back = new Intent(this,MainActivity.class);
+        back.putExtra("user",data.getStringExtra("user"));
+        back.putExtra("access",data.getStringExtra("access"));
+        setResult(Activity.RESULT_OK,back);
+        finish();
+    }
+
+    public void generateGraph(){
         allRaces = getResources().getStringArray(R.array.dog_races);
         n = allRaces.length;
 
         int[] entries = countEntries();
         DataPoint[] bars = entriesToDataPoints(entries);
 
-        graph = (GraphView) findViewById(R.id.dogStatsGraph);
+        graph = (GraphView) findViewById(R.id.dogStatsGraphView);
         BarGraphSeries<DataPoint> series = new BarGraphSeries<>(bars);
         series.setValueDependentColor(new ValueDependentColor<DataPoint>() {
             @Override
@@ -78,9 +132,6 @@ public class DogStatsActivity extends AppCompatActivity {
 
         graph.getGridLabelRenderer().setLabelFormatter(staticLabelsFormatter);
         graph.addSeries(series);
-
-
-
     }
 
     public void showToast(String message)
