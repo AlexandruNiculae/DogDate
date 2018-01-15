@@ -156,6 +156,7 @@ router.post('/addDog', ctx => {
 	});
 	ctx.response.body = dogs[dogs.length - 1];
 	console.log("body: " + JSON.stringify(dogs[dogs.length - 1]));
+	broadcast({message: "New Dog added!"});
 	ctx.response.status = 200;
 });
 
