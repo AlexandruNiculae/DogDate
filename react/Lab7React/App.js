@@ -4,6 +4,7 @@ import { StackNavigator } from 'react-navigation';
 import LoginScreen from './screens/Login';
 import LandingPage from './screens/LandingPage';
 import ViewDog from './screens/ViewDog';
+import AddDog from './screens/AddDog';
 
 
 
@@ -28,4 +29,5 @@ const MainNavigator = StackNavigator({
  Login: { screen: LoginScreen },
  LandingPage: { screen: LandingPage },
  ViewDog: {screen: ViewDog},
+ AddDog: {screen: AddDog},
 },{headerMode: "none"});

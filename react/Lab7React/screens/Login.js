@@ -95,19 +95,20 @@ static navigationOptions = {
 	  <View style = {styles.container}>
 	  <Text style = {styles.textStyle}>Dog Date</Text>
 	  <FormLabel>Username:</FormLabel>
-			   <FormInput onChangeText={(name) => this.setState({name})} value = {this.state.name} editable = {true}/>
-		  <FormLabel>Password:</FormLabel>
-					<FormInput secureTextEntry={true}  onChangeText={(password) => this.setState({password})} value = {this.state.password} editable = {true}/>
-			 <Button
-			   onPress = {this.login}
-			   title="Login"
-			   color="blue"
-			   accessibilityLabel=""
-			 />
+	  <FormInput onChangeText={(name) => this.setState({name})} value = {this.state.name} editable = {true}/>
+	  <FormLabel>Password:</FormLabel>
+	  <FormInput secureTextEntry={true}  onChangeText={(password) => this.setState({password})} value = {this.state.password} editable = {true}/>
+		 <Button
+		   onPress = {this.login}
+		   title="Login"
+		   color="gray"
+		   accessibilityLabel=""
+		 />
+		<FormLabel></FormLabel>
 	  <Button
 		 onPress = {this.sendEmail}
 		 title="Send email"
-		 color="#841584"
+		 color="gray"
 		 accessibilityLabel=""
 	  />
 	  </View>
